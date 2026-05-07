@@ -1,64 +1,31 @@
-# JioSaavn API
+# mavrixfy-song-api
 
-![GitHub License](https://img.shields.io/github/license/sumitkolhe/jiosaavn-api)
-![GitHub Release](https://img.shields.io/github/v/release/sumitkolhe/jiosaavn-api)
+Unofficial JioSaavn API powering the **Mavrixfy** music app.
 
-An Unofficial API for downloading high-quality songs, albums, playlists, and more from [JioSaavn](https://jiosaavn.com).
+Built on top of [sumitkolhe/jiosaavn-api](https://github.com/sumitkolhe/jiosaavn-api).
 
-## 📚 Documentation
+## Endpoints
 
-Check out the [API documentation](https://saavn.dev/docs) for detailed information on how to use the API.
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | /api/search/songs?query=&limit= | Search songs |
+| GET | /api/search/playlists?query=&limit= | Search playlists |
+| GET | /api/playlists?id=&limit=&page= | Get playlist details |
+| GET | /api/songs?id= | Get song by ID |
+| GET | /api/artists?id= | Get artist by ID |
 
-## 📰 Changelog
+Full docs at /swagger after deployment.
 
-For a detailed list of changes, see the [CHANGELOG](CHANGELOG.md).
+## Local Dev
 
-## 🔌 Running Locally
+bun install
+bun run dev
+# http://localhost:3000
 
-1. Clone the repository:
+## Deploy to Vercel
 
-   ```sh
-   git clone https://github.com/sumitkolhe/jiosaavn-api
-   cd jiosaavn-api
-   ```
+vercel login
+vercel --prod
 
-### Using Docker
-
-```sh
-docker-compose up
-```
-
-OR
-
-### Manually
-
-> [!NOTE]
-> You need `Bun(1.0.29+)` or `Node.js(v20+)`
-
-2. Install the required dependencies:
-
-   ```sh
-   bun install
-   ```
-
-3. Launch the development server:
-
-   ```sh
-   bun run dev
-   ```
-
-## ☁️ Deploying Your Own Instance
-
-JioSaavn API can be deployed to either Cloudflare Workers or Vercel. Below are the instructions for deploying to each platform.
-
-### Cloudflare Workers
-
-[![Deploy with Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sumitkolhe/jiosaavn-api)
-
-### Vercel
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sumitkolhe/jiosaavn-api)
-
-## 📜 License
-
-This project is distributed under the [MIT License](https://opensource.org/licenses/MIT). For more information, see the [LICENSE](LICENSE) file included in this repository.
+## Credits
+Original: https://github.com/sumitkolhe/jiosaavn-api

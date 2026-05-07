@@ -1,5 +1,4 @@
 {
-  "buildCommand": "",
   "installCommand": "bun install",
   "rewrites": [{ "source": "(.*)", "destination": "/api" }],
   "regions": ["bom1"],

@@ -40,7 +40,7 @@
     "prerelease": "bun run test",
     "release": "bun run changelogen --release --push",
     "spell-check": "cspell .",
-    "postinstall": "npx simple-git-hooks"
+    "postinstall": "node -e \"if(require('fs').existsSync('.git')) require('child_process').execSync('npx simple-git-hooks', {stdio:'inherit'})\""
   },
   "simple-git-hooks": {
     "pre-commit": "bun run lint && bun run format",

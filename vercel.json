@@ -1,4 +1,9 @@
 {
+  "functions": {
+    "api/index.ts": {
+      "includeFiles": "src/**"
+    }
+  },
   "outputDirectory": ".",
   "rewrites": [{ "source": "(.*)", "destination": "/api" }],
   "headers": [

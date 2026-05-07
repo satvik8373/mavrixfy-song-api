@@ -3,7 +3,7 @@ import { App } from '../src/app'
 import { AlbumController, ArtistController, SearchController, SongController } from '../src/modules/index'
 import { PlaylistController } from '../src/modules/playlists/controllers'
 
-export const config = { runtime: 'edge' }
+export const config = { runtime: 'nodejs' }
 
 const app = new App([
   new SearchController(),

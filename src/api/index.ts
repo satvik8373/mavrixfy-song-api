@@ -1,7 +1,7 @@
 import { handle } from 'hono/vercel'
-import { App } from '../src/app'
-import { AlbumController, ArtistController, SearchController, SongController } from '../src/modules/index'
-import { PlaylistController } from '../src/modules/playlists/controllers'
+import { App } from '../app'
+import { AlbumController, ArtistController, SearchController, SongController } from '../modules/index'
+import { PlaylistController } from '../modules/playlists/controllers'
 
 export const config = { runtime: 'nodejs' }
 

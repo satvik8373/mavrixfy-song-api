@@ -29,7 +29,7 @@
   "scripts": {
     "dev": "bun run --hot src/server.ts",
     "start": "bun dist/server.js",
-    "vercel-build": "",
+    "vercel-build": "echo 'no build needed'",
     "prebuild": "rm -rf dist",
     "build": "tsc && tsc-alias",
     "format": "prettier --write \"./**/*.{js,ts,json}\"",

@@ -1,5 +1,6 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "",
+  "installCommand": "bun install",
   "rewrites": [{ "source": "(.*)", "destination": "/api" }],
   "regions": ["bom1"],
   "headers": [

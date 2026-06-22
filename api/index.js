@@ -12325,5 +12325,11 @@ var index_default = handle(app)
 // Annotate the CommonJS export names for ESM import in node:
 0 &&
   (module.exports = {
-    config
+    config,
+    default: index_default
   })
+
+// Export the default handler for Vercel
+module.exports = index_default
+module.exports.default = index_default
+module.exports.config = config

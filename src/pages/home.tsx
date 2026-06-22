@@ -22,23 +22,23 @@ export const Meteors = ({ number }: { number: number }) => {
 }
 
 Home.get('/', (c) => {
-  const title = 'JioSaavn API'
+  const title = 'Mavrixfy API'
   const description =
-    'JioSaavn API is an unofficial wrapper written in TypeScript for jiosaavn.com providing programmatic access to a vast library of songs, albums, artists, playlists, and more.'
+    'Mavrixfy API is a powerful music streaming platform built with TypeScript, providing programmatic access to a vast library of songs, albums, artists, playlists, and more.'
 
   return c.html(
     <html>
       <head>
-        <title>JioSaavn API</title>
+        <title>Mavrixfy API</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta charset="utf-8" />
         <meta name="description" content={description} />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://saavn.dev/" />
+        <meta property="og:url" content="https://mavrixfy.site/" />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://saavn.dev/" />
+        <meta property="twitter:url" content="https://mavrixfy.site/" />
         <meta property="twitter:title" content={title} />
         <meta property="twitter:description" content={description} />
         <meta
@@ -105,11 +105,11 @@ Home.get('/', (c) => {
               />
             </svg>
             <p class="text-2xl md:text-4xl text-transparent font-bold leading-none bg-clip-text bg-gradient-to-r from-[#ff7d78] to-purple-600">
-              JioSaavn API
-              <span class="uppercase text-sm ml-3 text-gray-500 font-normal sm:hidden">Unofficial</span>
+              Mavrixfy API
+              <span class="uppercase text-sm ml-3 text-gray-500 font-normal sm:hidden">Music Platform</span>
             </p>
             <p class="hidden sm:block animate-[borderAnimation_3s_linear_infinite] rounded bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-[length:400%_400%] p-1">
-              <span class="block rounded px-1.5 py-0.5 text-xs text-white uppercase tracking-wider">Unofficial</span>
+              <span class="block rounded px-1.5 py-0.5 text-xs text-white uppercase tracking-wider">Music Platform</span>
             </p>
           </div>
 
@@ -125,7 +125,7 @@ Home.get('/', (c) => {
                 </span>
                 <span class="text-neutral-200 font-bold text-lg sm:text-xl md:text-2xl mt-2">Explore the Docs</span>
                 <div class="text-neutral-500 mt-2">
-                  Check out the documentation to learn how to use the JioSaavn API.
+                  Check out the documentation to learn how to use the Mavrixfy API.
                 </div>
               </div>
             </a>
@@ -140,7 +140,7 @@ Home.get('/', (c) => {
                   Open Source
                 </span>
                 <span class="text-neutral-200 font-bold text-lg sm:text-xl md:text-2xl mt-2">Open Source</span>
-                <div class="text-neutral-500 mt-2">Saavn API is open-source. Check out the source code on github.</div>
+                <div class="text-neutral-500 mt-2">Mavrixfy API is open-source. Check out the source code on github.</div>
               </div>
             </a>
 

@@ -1,3 +1,4 @@
+import { getRedisClient } from '#common/config/redis.config'
 import { userAgents, type Endpoints } from '#common/constants'
 import type { ApiContextEnum } from '#common/enums'
 
@@ -15,6 +16,25 @@ interface FetchResponse<T> {
 }
 
 export const useFetch = async <T>({ endpoint, params, context }: FetchParams): Promise<FetchResponse<T>> => {
+  // Build cache key
+  const sortedParams = Object.keys(params)
+    .sort()
+    .reduce((acc, key) => ({ ...acc, [key]: params[key] }), {})
+
+  const cacheKey = `saavn:${endpoint.toString()}:${JSON.stringify(sortedParams)}`
+  const redis = getRedisClient()
+
+  // 1. Try Cache Hit
+  try {
+    const cachedData = await redis.get<T>(cacheKey)
+    if (cachedData) {
+      return { data: cachedData, ok: true }
+    }
+  } catch (err) {
+    console.warn('[Redis] Read error in fetch.helper:', err)
+  }
+
+  // 2. Fetch from JioSaavn upstream
   const url = new URL('https://www.jiosaavn.com/api.php')
 
   url.searchParams.append('__call', endpoint.toString())
@@ -42,8 +62,17 @@ export const useFetch = async <T>({ endpoint, params, context }: FetchParams): P
       signal: controller.signal
     })
 
-    const data = await response.json()
-    return { data: data as T, ok: response.ok }
+    const data = (await response.json()) as T
+
+    // 3. Write to Redis Cache on success (TTL 30 minutes = 1800s)
+    if (response.ok && data) {
+      const ttl = endpoint.toString().includes('search') ? 300 : 1800
+      redis.setex(cacheKey, ttl, JSON.stringify(data)).catch((err) => {
+        console.warn('[Redis] Write error in fetch.helper:', err)
+      })
+    }
+
+    return { data, ok: response.ok }
   } finally {
     clearTimeout(timeoutId)
   }

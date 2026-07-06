@@ -27,11 +27,24 @@ export const useFetch = async <T>({ endpoint, params, context }: FetchParams): P
 
   const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)]
 
-  const response = await fetch(url.toString(), {
-    headers: { 'Content-Type': 'application/json', 'User-Agent': randomUserAgent }
-  })
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 8000)
 
-  const data = await response.json()
+  try {
+    const response = await fetch(url.toString(), {
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': randomUserAgent,
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Cookie': 'L=english; gdpr_acceptance=true; DL=english'
+      },
+      signal: controller.signal
+    })
 
-  return { data: data as T, ok: response.ok }
+    const data = await response.json()
+    return { data: data as T, ok: response.ok }
+  } finally {
+    clearTimeout(timeoutId)
+  }
 }

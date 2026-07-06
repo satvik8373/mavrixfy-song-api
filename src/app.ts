@@ -84,8 +84,9 @@ export class App {
 
   private initializeErrorHandler() {
     this.app.onError((err, ctx) => {
+      console.error('API Error:', err)
       const error = err as HTTPException
-      return ctx.json({ success: false, message: error.message }, error.status || 500)
+      return ctx.json({ success: false, message: error.message || String(err) }, error.status || 500)
     })
   }
 

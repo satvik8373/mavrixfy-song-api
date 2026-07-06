@@ -1,4 +1,4 @@
-import { handle } from 'hono/vercel'
+import { handle } from '@hono/node-server/vercel'
 import { App } from '../app'
 import { AlbumController, ArtistController, SearchController, SongController } from '../modules/index'
 import { PlaylistController } from '../modules/playlists/controllers'

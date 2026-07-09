@@ -29,7 +29,7 @@
   "scripts": {
     "dev": "bun run --hot src/server.ts",
     "start": "bun dist/server.js",
-    "prebuild": "rm -rf dist",
+    "prebuild": "node -e \"const fs=require('fs');try{fs.rmSync('dist',{recursive:true,force:true})}catch(e){}\"",
     "build": "tsc && tsc-alias && bun build src/api/index.ts --outfile=api/index.js --target=node",
     "format": "prettier --write \"./**/*.{js,ts,json}\"",
     "lint": "eslint .",

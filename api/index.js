@@ -41143,7 +41143,8 @@ class GetSongByLinkUseCase {
 class CreateSongStationUseCase {
   constructor() {}
   async execute(songId) {
-    const encodedSongId = JSON.stringify([encodeURIComponent(songId)]);
+    const ids = songId.split(",").map((id) => encodeURIComponent(id.trim()));
+    const encodedSongId = JSON.stringify(ids);
     const { data, ok } = await useFetch({
       endpoint: Endpoints.songs.station,
       params: {
@@ -41178,7 +41179,17 @@ class GetSongSuggestionsUseCase {
       throw new HTTPException(404, { message: `no suggestions found for the given song` });
     }
     const { stationid, ...suggestions } = data;
-    return Object.values(suggestions).map((element) => element && createSongPayload(element.song)).filter(Boolean).slice(0, limit) || [];
+    return Object.values(suggestions).map((element) => {
+      if (!element || typeof element !== "object")
+        return null;
+      if ("song" in element && element.song) {
+        return createSongPayload(element.song);
+      }
+      if ("id" in element && element.id) {
+        return createSongPayload(element);
+      }
+      return null;
+    }).filter((song) => !!song).slice(0, limit) || [];
   }
 }
 
@@ -42101,10 +42112,12 @@ class GetPlaylistByIdUseCase {
     if (!data)
       throw new HTTPException(404, { message: "playlist not found" });
     const playlist = createPlaylistPayload(data);
+    const startIndex = page * limit;
+    const endIndex = startIndex + limit;
     return {
       ...playlist,
       songCount: playlist?.songs?.length || null,
-      songs: playlist?.songs?.slice(0, limit) || []
+      songs: playlist?.songs?.slice(startIndex, endIndex) || []
     };
   }
 }
@@ -42125,10 +42138,12 @@ class GetPlaylistByLinkUseCase {
     if (!data)
       throw new HTTPException(404, { message: "playlist not found" });
     const playlist = createPlaylistPayload(data);
+    const startIndex = page * limit;
+    const endIndex = startIndex + limit;
     return {
       ...playlist,
       songCount: playlist?.songs?.length || null,
-      songs: playlist?.songs?.slice(0, limit) || []
+      songs: playlist?.songs?.slice(startIndex, endIndex) || []
     };
   }
 }

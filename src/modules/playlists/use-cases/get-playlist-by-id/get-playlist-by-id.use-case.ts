@@ -28,10 +28,12 @@ export class GetPlaylistByIdUseCase implements IUseCase<GetPlaylistByIdArgs, z.i
     if (!data) throw new HTTPException(404, { message: 'playlist not found' })
 
     const playlist = createPlaylistPayload(data)
+    const startIndex = page * limit
+    const endIndex = startIndex + limit
     return {
       ...playlist,
       songCount: playlist?.songs?.length || null,
-      songs: playlist?.songs?.slice(0, limit) || []
+      songs: playlist?.songs?.slice(startIndex, endIndex) || []
     }
   }
 }

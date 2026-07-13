@@ -35889,6 +35889,26 @@ class App {
       route.initRoutes();
       this.app.route("/api", route.controller);
     });
+    this.app.all("/api/recommendations/*", async (c) => {
+      const targetUrl = new URL(c.req.url);
+      targetUrl.host = "mavrixfy-api-drab.vercel.app";
+      targetUrl.protocol = "https";
+      targetUrl.port = "";
+      const headers = new Headers(c.req.header());
+      try {
+        const response = await fetch(targetUrl.toString(), {
+          method: c.req.method,
+          headers,
+          body: ["POST", "PUT", "PATCH"].includes(c.req.method) ? await c.req.blob() : undefined
+        });
+        return new Response(response.body, {
+          status: response.status,
+          headers: response.headers
+        });
+      } catch (err) {
+        return c.json({ success: false, message: `Proxy failed: ${err.message}` }, 502);
+      }
+    });
     this.app.route("/", Home);
   }
   initializeGlobalMiddlewares() {
@@ -40108,6 +40128,15 @@ var createSongPayload = (song) => ({
 });
 
 // src/modules/artists/helpers/artist.helper.ts
+var safeJsonParse = (value) => {
+  if (!value)
+    return null;
+  try {
+    return JSON.parse(value);
+  } catch {
+    return value;
+  }
+};
 var createArtistPayload = (artist) => ({
   id: artist.artistId || artist.id,
   name: artist.name,
@@ -40118,7 +40147,7 @@ var createArtistPayload = (artist) => ({
   isVerified: artist.isVerified || null,
   dominantLanguage: artist.dominantLanguage || null,
   dominantType: artist.dominantType || null,
-  bio: artist.bio ? JSON.parse(artist.bio) : null,
+  bio: artist.bio ? safeJsonParse(artist.bio) : null,
   dob: artist.dob || null,
   fb: artist.fb || null,
   twitter: artist.twitter || null,
@@ -40134,7 +40163,7 @@ var createArtistPayload = (artist) => ({
     name: similarArtist.name,
     url: similarArtist.perma_url,
     image: createImageLinks(similarArtist.image_url),
-    languages: similarArtist.languages ? JSON.parse(similarArtist.languages) : null,
+    languages: similarArtist.languages ? safeJsonParse(similarArtist.languages) : null,
     wiki: similarArtist.wiki,
     dob: similarArtist.dob,
     fb: similarArtist.fb,
@@ -40143,8 +40172,8 @@ var createArtistPayload = (artist) => ({
     type: similarArtist.type,
     dominantType: similarArtist.dominantType,
     aka: similarArtist.aka,
-    bio: similarArtist.bio ? JSON.parse(similarArtist.bio) : null,
-    similarArtists: similarArtist.similar ? JSON.parse(similarArtist.similar) : null
+    bio: similarArtist.bio ? safeJsonParse(similarArtist.bio) : null,
+    similarArtists: similarArtist.similar ? safeJsonParse(similarArtist.similar) : null
   })) || null
 });
 var createArtistMapPayload = (artist) => ({

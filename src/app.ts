@@ -26,6 +26,31 @@ export class App {
       this.app.route('/api', route.controller)
     })
 
+    // Proxy recommendations requests to the main backend to support legacy app installations
+    this.app.all('/api/recommendations/*', async (c) => {
+      const targetUrl = new URL(c.req.url)
+      targetUrl.host = 'mavrixfy-api-drab.vercel.app'
+      targetUrl.protocol = 'https'
+      targetUrl.port = ''
+      
+      const headers = new Headers(c.req.header())
+      
+      try {
+        const response = await fetch(targetUrl.toString(), {
+          method: c.req.method,
+          headers,
+          body: ['POST', 'PUT', 'PATCH'].includes(c.req.method) ? await c.req.blob() : undefined
+        })
+        
+        return new Response(response.body, {
+          status: response.status,
+          headers: response.headers
+        })
+      } catch (err: any) {
+        return c.json({ success: false, message: `Proxy failed: ${err.message}` }, 502)
+      }
+    })
+
     this.app.route('/', Home)
   }
 

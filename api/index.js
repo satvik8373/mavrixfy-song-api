@@ -35958,9 +35958,12 @@ JioSaavn API, accessible at [saavn.dev](https://saavn.dev), is an unofficial API
   }
   initializeErrorHandler() {
     this.app.onError((err, ctx) => {
-      console.error("API Error:", err);
       const error = err;
-      return ctx.json({ success: false, message: error.message || String(err) }, error.status || 500);
+      const status = error.status || 500;
+      if (status !== 404) {
+        console.error("API Error:", err);
+      }
+      return ctx.json({ success: false, message: error.message || String(err) }, status);
     });
   }
   getApp() {

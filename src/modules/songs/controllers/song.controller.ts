@@ -26,6 +26,12 @@ export class SongController implements Routes {
         operationId: 'getSongByIdsOrLink',
         request: {
           query: z.object({
+            id: z.string().optional().openapi({
+              title: 'Song ID',
+              description: 'Single song ID',
+              type: 'string',
+              example: '3IoDK8qI'
+            }),
             ids: z.string().optional().openapi({
               title: 'Song IDs',
               description: 'Comma-separated list of song IDs',
@@ -69,24 +75,25 @@ export class SongController implements Routes {
         }
       }),
       async (ctx) => {
-        const { link, ids } = ctx.req.valid('query')
+        const { link, ids, id } = ctx.req.valid('query')
+        const finalIds = ids || id
 
-        if (!link && !ids) {
-          return ctx.json({ success: false, message: 'Either song IDs or link is required' }, 400)
+        if (!link && !finalIds) {
+          return ctx.json({ success: false, message: 'Either song IDs/ID or link is required' }, 400)
         }
 
-        // Handle case where a JioSaavn song URL is passed through the ids parameter
-        if (ids && ids.includes('jiosaavn.com')) {
-          const cleanUrl = ids.split('?')[0].replace(/\/+$/, '')
+        // Handle case where a JioSaavn song URL is passed through the id or ids parameter
+        if (finalIds && finalIds.includes('jiosaavn.com')) {
+          const cleanUrl = finalIds.split('?')[0].replace(/\/+$/, '')
           const match = cleanUrl.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/)
-          const token = match ? match[1] : ids
+          const token = match ? match[1] : finalIds
           const response = await this.songService.getSongByLink(token)
           return ctx.json({ success: true, data: response })
         }
 
         const response = link
           ? await this.songService.getSongByLink(link)
-          : await this.songService.getSongByIds({ songIds: ids! })
+          : await this.songService.getSongByIds({ songIds: finalIds! })
 
         return ctx.json({ success: true, data: response })
       }

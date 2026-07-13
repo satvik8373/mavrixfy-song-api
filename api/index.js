@@ -41277,6 +41277,12 @@ class SongController {
       operationId: "getSongByIdsOrLink",
       request: {
         query: exports_external.object({
+          id: exports_external.string().optional().openapi({
+            title: "Song ID",
+            description: "Single song ID",
+            type: "string",
+            example: "3IoDK8qI"
+          }),
           ids: exports_external.string().optional().openapi({
             title: "Song IDs",
             description: "Comma-separated list of song IDs",
@@ -41314,18 +41320,19 @@ class SongController {
         404: { description: "Song not found with the given ID or link" }
       }
     }), async (ctx) => {
-      const { link: link2, ids } = ctx.req.valid("query");
-      if (!link2 && !ids) {
-        return ctx.json({ success: false, message: "Either song IDs or link is required" }, 400);
+      const { link: link2, ids, id } = ctx.req.valid("query");
+      const finalIds = ids || id;
+      if (!link2 && !finalIds) {
+        return ctx.json({ success: false, message: "Either song IDs/ID or link is required" }, 400);
       }
-      if (ids && ids.includes("jiosaavn.com")) {
-        const cleanUrl = ids.split("?")[0].replace(/\/+$/, "");
+      if (finalIds && finalIds.includes("jiosaavn.com")) {
+        const cleanUrl = finalIds.split("?")[0].replace(/\/+$/, "");
         const match2 = cleanUrl.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/);
-        const token = match2 ? match2[1] : ids;
+        const token = match2 ? match2[1] : finalIds;
         const response2 = await this.songService.getSongByLink(token);
         return ctx.json({ success: true, data: response2 });
       }
-      const response = link2 ? await this.songService.getSongByLink(link2) : await this.songService.getSongByIds({ songIds: ids });
+      const response = link2 ? await this.songService.getSongByLink(link2) : await this.songService.getSongByIds({ songIds: finalIds });
       return ctx.json({ success: true, data: response });
     });
     this.controller.openapi(createRoute({

@@ -40314,6 +40314,13 @@ class AlbumController {
       }
     }), async (ctx) => {
       const { id, link: link2 } = ctx.req.valid("query");
+      if (id && id.includes("jiosaavn.com")) {
+        const cleanUrl = id.split("?")[0].replace(/\/+$/, "");
+        const match2 = cleanUrl.match(/jiosaavn\.com\/album\/[^/]+\/([^/]+)$/);
+        const token = match2 ? match2[1] : id;
+        const response2 = await this.albumService.getAlbumByLink(token);
+        return ctx.json({ success: true, data: response2 });
+      }
       const response = link2 ? await this.albumService.getAlbumByLink(link2) : await this.albumService.getAlbumById(id);
       return ctx.json({ success: true, data: response });
     });
@@ -41310,6 +41317,13 @@ class SongController {
       const { link: link2, ids } = ctx.req.valid("query");
       if (!link2 && !ids) {
         return ctx.json({ success: false, message: "Either song IDs or link is required" }, 400);
+      }
+      if (ids && ids.includes("jiosaavn.com")) {
+        const cleanUrl = ids.split("?")[0].replace(/\/+$/, "");
+        const match2 = cleanUrl.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/);
+        const token = match2 ? match2[1] : ids;
+        const response2 = await this.songService.getSongByLink(token);
+        return ctx.json({ success: true, data: response2 });
       }
       const response = link2 ? await this.songService.getSongByLink(link2) : await this.songService.getSongByIds({ songIds: ids });
       return ctx.json({ success: true, data: response });

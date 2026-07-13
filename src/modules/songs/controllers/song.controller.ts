@@ -75,6 +75,15 @@ export class SongController implements Routes {
           return ctx.json({ success: false, message: 'Either song IDs or link is required' }, 400)
         }
 
+        // Handle case where a JioSaavn song URL is passed through the ids parameter
+        if (ids && ids.includes('jiosaavn.com')) {
+          const cleanUrl = ids.split('?')[0].replace(/\/+$/, '')
+          const match = cleanUrl.match(/jiosaavn\.com\/song\/[^/]+\/([^/]+)$/)
+          const token = match ? match[1] : ids
+          const response = await this.songService.getSongByLink(token)
+          return ctx.json({ success: true, data: response })
+        }
+
         const response = link
           ? await this.songService.getSongByLink(link)
           : await this.songService.getSongByIds({ songIds: ids! })

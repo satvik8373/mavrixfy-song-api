@@ -70,6 +70,15 @@ export class AlbumController implements Routes {
       async (ctx) => {
         const { id, link } = ctx.req.valid('query')
 
+        // Handle case where a JioSaavn album URL is passed through the id parameter
+        if (id && id.includes('jiosaavn.com')) {
+          const cleanUrl = id.split('?')[0].replace(/\/+$/, '')
+          const match = cleanUrl.match(/jiosaavn\.com\/album\/[^/]+\/([^/]+)$/)
+          const token = match ? match[1] : id
+          const response = await this.albumService.getAlbumByLink(token)
+          return ctx.json({ success: true, data: response })
+        }
+
         const response = link ? await this.albumService.getAlbumByLink(link) : await this.albumService.getAlbumById(id!)
 
         return ctx.json({ success: true, data: response })

@@ -21,7 +21,7 @@ export class GetPlaylistByLinkUseCase implements IUseCase<GetPlaylistByLinkArgs,
       params: {
         token,
         n: limit,
-        p: page,
+        p: page + 1,
         type: 'playlist'
       }
     })
@@ -29,13 +29,9 @@ export class GetPlaylistByLinkUseCase implements IUseCase<GetPlaylistByLinkArgs,
     if (!data) throw new HTTPException(404, { message: 'playlist not found' })
 
     const playlist = createPlaylistPayload(data)
-    const startIndex = page * limit
-    const endIndex = startIndex + limit
-
     return {
       ...playlist,
-      songCount: playlist?.songs?.length || null,
-      songs: playlist?.songs?.slice(startIndex, endIndex) || []
+      songs: playlist.songs || []
     }
   }
 }

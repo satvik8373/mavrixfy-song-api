@@ -66,10 +66,28 @@ export const useFetch = async <T>({ endpoint, params, context }: FetchParams): P
 
     // 3. Write to Redis Cache on success (TTL 30 minutes = 1800s)
     if (response.ok && data) {
-      const ttl = endpoint.toString().includes('search') ? 300 : 1800
-      redis.setex(cacheKey, ttl, JSON.stringify(data)).catch((err) => {
-        console.warn('[Redis] Write error in fetch.helper:', err)
-      })
+      let shouldCache = true
+      if (data && typeof data === 'object') {
+        const obj = data as Record<string, any>
+        const isPlaylistOrAlbum =
+          obj.type === 'playlist' ||
+          obj.type === 'album' ||
+          endpoint.toString() === 'playlist.getDetails' ||
+          endpoint.toString() === 'content.getAlbumDetails'
+
+        if (isPlaylistOrAlbum) {
+          if (!Array.isArray(obj.list) || obj.list.length === 0) {
+            shouldCache = false
+          }
+        }
+      }
+
+      if (shouldCache) {
+        const ttl = endpoint.toString().includes('search') ? 300 : 1800
+        redis.setex(cacheKey, ttl, JSON.stringify(data)).catch((err) => {
+          console.warn('[Redis] Write error in fetch.helper:', err)
+        })
+      }
     }
 
     return { data, ok: response.ok }
